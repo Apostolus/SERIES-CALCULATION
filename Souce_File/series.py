@@ -85,19 +85,4 @@ def cos_series(f,n):
     temps = temps.multiplication_trunc(temps,n)
     return (un + temps).multiplication_trunc(inverse_series(un - temps,n),n)
 
-#--------------------------------------------------#
-def fsin(f,n):
-    t=exp_series(f*CC.0,n)
-    tt=exp_series(-f*CC.0,n)
-    return -0.5*CC.0*(t-tt)
 
-def fcos(f,n):
-    t=exp_series(f*CC.0,n)
-    tt=exp_series(-f*CC.0,n)
-    return 0.5*(t+tt)
-
-def ftan(f,n):
-    return fsin(f,n)*inverse_series(fcos(f,n),n)
-
-def farctan(f,n):
-    return 0.5*CC.0*log_zero_nonNull_series(f.parent().one()-CC.0*f,n)-0.5*CC.0*log_zero_nonNull_series(f.parent().one()+CC.0*f,n)
