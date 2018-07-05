@@ -130,9 +130,15 @@ def exp_zero_zero_series(f, n):
     s = f.parent().one()
     #optimisation sur le nombre de fois de l'iterations
     #r = int(log(n,2))
-    r=n
-    for k in range(r):
-        s += s.multiplication_trunc(f - log_zero_un_series(s, n), n)
+    #r=n
+    
+    #for k in range(r):
+    #    s += s.multiplication_trunc(f - log_zero_un_series(s, n), n)
+    deg = 1
+    while(deg<n) :
+        s += s.multiplication_trunc(f - log_zero_un_series(s, deg+1),deg )
+        deg=deg*2
+    s += s.multiplication_trunc(f - log_zero_un_series(s, deg+1),n )
     return s
 
 def exp_series(f, n):

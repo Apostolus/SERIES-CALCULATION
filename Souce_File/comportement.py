@@ -77,6 +77,12 @@ def reportWriter(path,mode,varFixee,nbIteration,nbRepete,fun,switch,maxInt):
             f.write("%d %.15f\n" %(k,moyen))
             print("\t\t  Temps moyen = %.15f seconds" %(moyen))
 
+    elif(mode == 3):
+        for k in range(1,nbIteration):
+            print("\t\t%d fois de precision, nombre de termes fixe = %d, on effectuera %d fois des iterations" %(2**k,varFixee,nbRepete))
+            moyen = tempsMoyen(nbRepete,fun,switch,varFixee,maxInt,2**k)
+            f.write("%d %.15f\n" %(k,moyen))
+            print("\t\t  Temps moyen = %.15f seconds" %(moyen))
     else:
         print("Erreur: mode inconnu!")
         f.close()
@@ -246,3 +252,16 @@ def test():
     f.close()
     print("\n")
     """
+def test2():
+    rootpath = "/usr/share/SageMath/2I013/data/"
+    maxInt = 100
+    nbIteration = 100
+    nbRepete = 5
+    moyen = 0
+    file_abs = ""
+    nbTermesFixe = 12
+    niveauPrecisionFixe = 20
+    print("\texp_zero_zero PRECISION special")
+    file_abs = rootpath + "exp_zero_zero_precision_special.txt"
+    reportWriter(file_abs,3,nbTermesFixe,20,nbRepete,comp_exp_zero_zero,1,maxInt)
+    
