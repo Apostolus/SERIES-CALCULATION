@@ -1,35 +1,82 @@
 from sage.all import *
 
 """
+#/usr/share/SageMath/src/sage/structure/element.pxd
+from sage.structure.element import parent
+
+#Nous ne connaissons pas encore le fichier qui contient la fonction "one" comme ".parent.one()"
+
+#le fichier qui contient la fonction "zero" comme "parent.zero"
+
+#/usr/share/SageMath/local/lib/python2.7/site-packages/IPython/core/autocall.py
+from autocall import exit
+
+#le fichier qui contient la fonction "multiplication_trunc"
+
+#/usr/share/SageMath/local/lib/python2.7/site-packages/sage/calculus/functional.py
+from calculus.functional import derivative
+
+#/usr/share/SageMath/local/lib/python2.7/site-packages/sage/misc/functional.py
+from misc.functional import integral
+"""
+
+"""
+This package is built for the operations on series whose terme could be rational, real, complex and even terme of another ring. 
+
+For example, x + 1/2*x^2 + 1/3*x^3, 1.0*x + 0.5*x^2 + 0.333*x^3, I*x + (0.5+0.5I)*x^2, and ax + 1/2*a^2*x^2, etc. 
+
+And don't forget well decalre the ring of each function before use them :
+    for rational:
 sage: Q=PolynomialRing(QQ,'x')
 sage: x=Q.gen()
+    for real:
 sage: R=PolynomialRing(RR,'y')
 sage: y=R.gen()
+    for complex:
 sage: C=PolynomialRing(CC,'z')
 sage: z=C.gen()
+    for ring:
 sage: AQ=PolynomialRing(Q,'a')
 sage: a=AQ.gen()
+
+However, our goal and the principal advanteges of this package is rapidly calculating the operations on rational, which means our functions can insure the result after operations on rational series still rational, while accelerating calculions.
+
+This package contains the basic operations on a serie: inverse, log, exp, arctan, tan, sin and cos.
+
+In math, generally, the number of termes of the exact result after these operations .. should be infinitied. So every time when we do these operation, we need give the level of precision, which is the max number of termes and presented by "n".
 """
 
 
 def inverse_un_series(f, n):
     # calcul pour une serie formelle de la forme F=1+XG de son inverse modulo N
     """
+    This function returns the first "n" termes of the inverse of the serie "f" that satisfies f(0) is 1. In other word, it will return a serie g that satifies f * g = 1.
+    If f(0) isn't 1, it will return raise an exception of error and exit.
+
     EXAMPLE::
+     
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+    
         sage: P=x+1
         sage: inverse_un_series(P,10)
         -x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
-
+    
+    ::
+    
         sage: P=x*x+1
         sage: inverse_un_series(P,10)
         x^8 - x^6 + x^4 - x^2 + 1
 
-        sage: AQ
-        Univariate Polynomial Ring in a over Univariate Polynomial Ring in x over Rational Field
+    ::
 
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
+        
         sage: P=1+x*a+(x+1)*a*a
         sage: inverse_un_series(P,4)
         (-x^3 + 2*x^2 + 2*x)*a^3 + (x^2 - x - 1)*a^2 - x*a + 1
+        
         sage: P.multiplication_trunc( inverse_un_series(P,4),4)
         1
 
@@ -72,16 +119,28 @@ def log_un_series(f, n):
 def log_zero_un_series(f, n):
     # calculer log(f) pour une serie formelle f, qui verifie forcement que f(0)=1
     """
+    This function returns the firsr "n" termes of the logarithm of serie "f" that satifies f(0) = 1. In other word, it will return a serie g that satifies e^g = f.
+    If f(0) isn't 1, it will raise an exception and exit.
+
     EXAMPLE::
+    
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+
         sage: P=x+1
         sage: log_zero_un_series(P,10)
         1/9*x^9 - 1/8*x^8 + 1/7*x^7 - 1/6*x^6 + 1/5*x^5 - 1/4*x^4 + 1/3*x^3 - 1/2*x^2 + x
 
+    ::
+
         sage: P=x*x+1
         sage: log_zero_un_series(P,10)
         -1/4*x^8 + 1/3*x^6 - 1/2*x^4 + x^2
-        sage: log_zero_un_series(P,10)==P._log_series(10)
-        True
+    
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
 
         sage: P=a*x+1
         sage: log_zero_un_series(P,10)
@@ -106,19 +165,35 @@ def log_zero_nonNull_series(f, n):
 def exp_zero_zero_series(f, n):
     # calculer exp(f) pour une serie f qui suffit forcement que f(0)=0
     """
+    This function returns the first "n" termes of the exponent of serie "f" that satisfies f(0) = 0. In other words, it will return a serie g that satisfies e^f = g.
+    If f(0) isn't 0, it will raise an exception and exit.
+
     EXAMPLE::
+
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+
         sage: P=x
         sage: exp_zero_zero_series(P,10)
         1/362880*x^9 + 1/40320*x^8 + 1/5040*x^7 + 1/720*x^6 + 1/120*x^5 + 1/24*x^4 + 1/6*x^3 + 1/2*x^2 + x + 1
 
+    ::
+
         P=x+2*x*x+3*x*x*x
-        sage: exp_zero_zero_series(P,10)==P._exp_series(10)
-        True
+        sage: exp_zero_zero_series(P,10)
+        1626437/72576*x^9 + 794081/40320*x^8 + 15431/1008*x^7 + 9661/720*x^6 + 1181/120*x^5 + 145/24*x^4 + 31/6*x^3 + 5/2*x^2 + x + 1
+    
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
 
         sage: P=a*x
         sage: exp_zero_zero_series(P,10)
         1/362880*x^9*a^9 + 1/40320*x^8*a^8 + 1/5040*x^7*a^7 + 1/720*x^6*a^6 + 1/120*x^5*a^5 + 1/24*x^4*a^4 + 1/6*x^3*a^3 + 1/2*x^2*a^2 + x*a + 1
-        
+    
+    ::
+
         P=x^2*a^2 + x*a
         sage: log_zero_un_series(exp_zero_zero_series(P,10),10)==P
         True
@@ -130,9 +205,15 @@ def exp_zero_zero_series(f, n):
     s = f.parent().one()
     #optimisation sur le nombre de fois de l'iterations
     #r = int(log(n,2))
-    r=n
-    for k in range(r):
-        s += s.multiplication_trunc(f - log_zero_un_series(s, n), n)
+    #r=n
+    
+    #for k in range(r):
+    #    s += s.multiplication_trunc(f - log_zero_un_series(s, n), n)
+    deg = 1
+    while(deg<n) :
+        s += s.multiplication_trunc(f - log_zero_un_series(s, deg+1),deg )
+        deg=deg*2
+    s += s.multiplication_trunc(f - log_zero_un_series(s, deg+1),n )
     return s
 
 def exp_series(f, n):
@@ -144,15 +225,30 @@ def exp_series(f, n):
 def arctan_series(f,n):
     # calculer arctan(f) pour une serie f
     """
+    This function returns the first "n" termes of arctan of serie f that satisfies f(0) = 0.
+    If f(0) isn't 0, it will raise an exception and exit.
+
     EXAMPLE::
+    
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+
         sage: P=x
         sage: arctan_series(P,10)
         1/9*x^9 - 1/7*x^7 + 1/5*x^5 - 1/3*x^3 + x
+
+    ::
 
         sage: P=x+2*x*x
         sage: arctan_series(P,10)==P._atan_series(10)
         True
 
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
+        
+        sage: P=x*x*a*a+2*x*a
         sage: arctan_series(P,10)
         -334/9*x^9*a^9 - 56*x^8*a^8 - 16/7*x^7*a^7 + 47/3*x^6*a^6 + 22/5*x^5*a^5 - 4*x^4*a^4 - 8/3*x^3*a^3 + x^2*a^2 + 2*x*a
     """
@@ -166,15 +262,30 @@ def arctan_series(f,n):
 def tan_series(f,n):
     #calculer tan(f) pour une serie f
     """
+    This function returns the first "n" termes of tan of serie f that satisfies f(0) = 0.
+    If f(0) isn't 0, it will raise an exception and exit.
+
     EXAMPLE::
+
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+    
         sage: P=x
         sage: tan_series(P,10)
         62/2835*x^9 + 17/315*x^7 + 2/15*x^5 + 1/3*x^3 + x
 
+    ::
+
         sage: P=x^2 + 2*x
-        sage: tan_series(P,10)==P._tan_series(10)
-        True
-        
+        sage: tan_series(P,10)
+        27668/567*x^9 + 1328/45*x^8 + 5536/315*x^7 + 11*x^6 + 94/15*x^5 + 4*x^4 + 8/3*x^3 + x^2 + 2*x
+
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
+
+        sage: P=x*x*a*a+2*x*a
         sage: tan_series(P,10)
         27668/567*x^9*a^9 + 1328/45*x^8*a^8 + 5536/315*x^7*a^7 + 11*x^6*a^6 + 94/15*x^5*a^5 + 4*x^4*a^4 + 8/3*x^3*a^3 + x^2*a^2 + 2*x*a
     """
@@ -193,14 +304,28 @@ def tan_series(f,n):
 def sin_series(f,n):
     # calculer sin(f) pour une serie f
     """
+    This function returns the first "n" termes of the sinus of serie f that satisfies f(0) = 0.
+    If f(0) isn't 0, it will raise an exception and exit.
+
     EXAMPLE::
+
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+    
         sage: P=x
         sage: sin_series(P,10)
         1/362880*x^9 - 1/5040*x^7 + 1/120*x^5 - 1/6*x^3 + x
 
+    ::
+
         sage: P=x*x+2*x
-        sage: sin_series(P,10)==P._sin_series(10)
-        True
+        sage: sin_series(P,10)
+        -551/11340*x^9 + 11/45*x^8 + 202/315*x^7 + 1/2*x^6 - 11/15*x^5 - 2*x^4 - 4/3*x^3 + x^2 + 2*x
+
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
         
         sage: H=x*x*a*a+2*a*x
         sage: sin_series(H,10)
@@ -215,16 +340,28 @@ def sin_series(f,n):
 def cos_series(f,n):
     # calculer cos(f) pour une serie f
     """
+    This function returns the first "n" termes of the cosinus of serie f that satisfies f(0) = 0.
+    If f(0) isn't 0, it will raise an exception and exit.
+    
     EXAMPLE::
+        
+        sage: Q=PolynomialRing(QQ,'x')
+        sage: x=Q.gen()
+        
         sage: P=x
         sage: cos_series(P,10)
         1/40320*x^8 - 1/720*x^6 + 1/24*x^4 - 1/2*x^2 + 1
 
+    ::
+
         sage: P=x*x+2*x
         sage: cos_series(P,10)
         -62/315*x^9 - 719/2520*x^8 + 1/15*x^7 + 41/45*x^6 + 4/3*x^5 + 1/6*x^4 - 2*x^3 - 2*x^2 + 1
-        sage: cos_series(P,10)==P._cos_series(10)
-        True
+
+    ::
+
+        sage: AQ=PolynomialRing(Q,'a')
+        sage: a=AQ.gen()
 
         sage: P=a*a*x*x+2*a*x
         sage: cos_series(P,10)
