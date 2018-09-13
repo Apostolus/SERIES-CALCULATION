@@ -313,10 +313,15 @@ def tan_series(f, n):
 
     un = f.parent().one()
     s = f
-    for k in range(n):
-        temps1 = f - arctan_series(s, n)
-        temps2 = un + s.multiplication_trunc(s, n)
-        s += temps1.multiplication_trunc(temps2, n)
+    deg = 1
+   while(deg<n):
+        temps1 = f - arctan_series(s, deg+1)
+        temps2 = un + s.multiplication_trunc(s, deg+1)
+        s += temps1.multiplication_trunc(temps2, deg)
+        deg*=2
+    temps1 = f - arctan_series(s, deg+1)
+    temps2 = un + s.multiplication_trunc(s, n)
+    s += temps1.multiplication_trunc(temps2, n)
     return s
 
 def sin_series(f, n):
