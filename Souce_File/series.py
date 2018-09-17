@@ -37,12 +37,11 @@ In maths, generally, the number of terms of the exact result after these operati
 
 
 def inverse_un_series(f, n):
-    # calcul pour une serie formelle de la forme F=1+XG de son inverse modulo N
     """
     This function returns the first "n" terms of the inverse of the serie "f" that satisfies f(0) is 1. In other word, it will return a serie g that satifies f * g = 1.
     If f(0) isn't 1, it will return raise an exception of error and exit.
     ALGORITHM:
-        
+        Newton iteration starting from (x^(-1))^(-1) = x
     
     EXAMPLE::
      
@@ -71,7 +70,7 @@ def inverse_un_series(f, n):
     """
     
     if(not f(0).is_one()):
-        raise ZeroDvisionError("Erreur! f(x) n'est pas sous forme de f=1+xG!")
+        raise ZeroDvisionError("Error: f(0) must be equal to 1")
 
     if n == 1:
         return f.parent().one()
@@ -80,16 +79,17 @@ def inverse_un_series(f, n):
         return G + (1 - G.multiplication_trunc(f, n)).multiplication_trunc(G, n)
 
 def inverse_series(f, n):
-    # calcul l'inverse une serie formelle F avec F(0) inversible
+	"""
+	Calculates the inverse of a serie F with F(0) invertible	
+	"""
     if(f(0).is_one()):
         return inverse_un_series(f,n)
+
     if(f(0)==0):
-        print("Erreur! f(0) ne doit pas etre zero!")
-        sys.exit(1)
+        raise ZeroDivisionError("Error: f(0) is 0")
 
     if (not f(0).is_unit()):
-        print("Erreur! f(0) n'est pas inversible!")
-        sys.exit(1)
+        raise ZeroDivisionError("Error: f(0) is not invertible")
 
     if n==1:
         return f.parent()(f(0).inverse_of_unit())
@@ -98,12 +98,11 @@ def inverse_series(f, n):
         return G + (1 - G.multiplication_trunc(f, n)).multiplication_trunc(G, n)
 
 def log_un_series(f, n):
-	# core function
 	"""
-	This function is the heart part of the next function to calculate logarithm of a polynome, it executes the algorithm which uses the formula log(x) = integral(1/x). But, it only accepts the polynome in form of F=XG, G is a polynome. Finally, it returns log(f) in form of a serie.
+	This function is the heart part of the next function to calculate logarithm of a polynom, it executes the algorithm which uses the formula log(x) = integral(1/x). But, it only accepts the polynome in form of F=XG, G is a polynome. Finally, it returns log(f) in form of a serie.
 	"""
     if(f(0)!=0):
-        print("Erreur! f(0) doit etre 0!")
+        print("Error: f(0) must be equal to 0!")
         sys.exit(1)
 
     D = f.derivative()
@@ -111,7 +110,6 @@ def log_un_series(f, n):
     return (D.multiplication_trunc(I, n - 1)).integral()
 
 def log_zero_un_series(f, n):
-    # calculer log(f) pour une serie formelle f, qui verifie forcement que f(0)=1
     """
     This function returns the firsr "n" termes of the logarithm of serie "f" that satifies f(0) = 1. In other word, it will return a serie g that satifies e^g = f.
     If f(0) isn't 1, it will raise an exception and exit.
@@ -138,25 +136,21 @@ def log_zero_un_series(f, n):
     """
     
     if(f(0)!=f.parent().one()):
-        print("Erreur! f(0) doit etre 1!")
-        sys.exit(1)
+        raise ZeroDivisionError("Error: f(0) must be equal to 1")
 
     return log_un_series((f - 1), n)
 
 def log_zero_nonNull_series(f, n):
-	#general function
 	"""
 	This function is a more general logarithm function, which means there is only one mathematical limit on the polynome f, which is f(0) != 0, instead of the need of "f(0) = 1" in the last function "log_zero_un_series(f, n)". It can be used for any polynome f, even if f(0) != 1, for example a, because we can separe this operation in two parts: log(a) and log(f - a), finally it will return log(a) + log(f - a). But, please pay your attention, this function cannot insure the result is still on the same ring of f, because of log(a). So, the advise is to use it when f bases on real or complex.
 	"""
     if(f(0)==0):
-        print("Erreur! log(0) n'est pas defini!")
-        sys.exit(1)
+        raise ZeroDivisionError("Error: log(0) is not defined")
     
     a = f(0)
     return log(a) + log_un_series(f/a - 1, n)
 
 def exp_zero_zero_series(f, n):
-    # calculer exp(f) pour une serie f qui suffit forcement que f(0)=0
     """
     This function returns the first "n" termes of the exponent of serie "f" that satisfies f(0) = 0. In other words, it will return a serie g that satisfies e^f = g.
     If f(0) isn't 0, it will raise an exception and exit.
@@ -186,7 +180,7 @@ def exp_zero_zero_series(f, n):
         True
     """
     if(f(0)!=f.parent().zero()):
-        print("Erreur! f(0) doit etre 0!")
+        print("Error: f(0) must be equal to 0!")
         sys.exit(1)
     
     s = f.parent().one()
@@ -204,7 +198,6 @@ def exp_zero_zero_series(f, n):
     return s
 
 def exp_series(f, n):
-    #general function
 	"""
 	This function is a more general exponent function, which means there is no limit on the polynome f, instead of the need of "f(0) = 0" in the last function "exp_zero_zero_series(f, n)". It can be used for any polynome f, even if f(0) != 0, for example a, because we can separe this operation in two parts: exp(a) and exp(f - a), finally it will return exp(a)*exp(f - a). But, please pay your attention, this function cannot insure the result is still on the same ring of f, because of exp(a). So, the advise is to use it when f bases on real or complex.
 	"""
@@ -269,7 +262,7 @@ def tan_series(f, n):
         27668/567*x^9*a^9 + 1328/45*x^8*a^8 + 5536/315*x^7*a^7 + 11*x^6*a^6 + 94/15*x^5*a^5 + 4*x^4*a^4 + 8/3*x^3*a^3 + x^2*a^2 + 2*x*a
     """
     if(f(0)!=0):
-        print("Erreur! f(0) doit etre 0!")
+        print("Error: f(0) must be equal to 0!")
         sys.exit(1)
 
     un = f.parent().one()
